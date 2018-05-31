@@ -1,43 +1,54 @@
 $(document).ready(function () {
     var arrayOfButtons = ["Music", "Movies", "Animals", "Kids"];
+    var gifArray = [];
 
+    var gifSpot = $("#putGifsHere");
 
     function gifDetails() {
         var data = $(this).attr("data-name");
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + data + "&api_key=UogcJWs3yhlJmWBoGkpQPL4WDPayChcK&limit=10";
-        var bool = true;
+
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function (response) {
             console.log(response);
-            var bool = true;
-            var gifSpot = $("#putGifsHere");
-            var stillGIFs = [];
-            var movingGIFs = [];
+
 
             for (var i = 0; i < 10; i++) {
-                var still = "<img src='" + response.data[i].images['480w_still'].url + " class='stillIndex'>";
-                stillGIFs.push(still);
-                var moving = "<img src='" + response.data[i].images.downsized.url + " class='movingIndex'>";
-                movingGIFs.push(moving);
+                //create variables to assign to gifObject
+                var still = response.data[i].images['480w_still'].url;
+                var moving = response.data[i].images.downsized.url;
+                var rating = response.data[i].rating;
+
+                gifArray[i] = {
+                    stillImage: still,
+                    movingImage: moving,
+                    rated: rating
+                };
             }
-
-            for (var j = 0; j < stillGIFs.length; j++) {
-                gifSpot.prepend(stillGIFs[i]);
-            }
-
-            // $(".index").click(function() {
-            //     $(this).toggleClass();
-            // });
-
         });
     }
 
+    function displayGifs() {
+        //tried ".gif", but doesn't work. Not sure why.
+        $(this).click(function () {
 
+            for (var i = 0; i < gifArray.length; i++) {
+                
+                //display image and rating
+                var gifCard = $("<div class='index'>");
+                var stillPosted = $("<img>").attr("src", gifArray[i].stillImage);
+                var ratingPosted = gifArray[i].rated;
+                // var movingPosted = "<img src='" + gifArray[i].movingImage + "'>";
+                gifCard.append("GIF rating: " + ratingPosted.toUpperCase()).prepend(stillPosted);
 
+                gifSpot.prepend(gifCard);
+            }
+        });
+    }
 
-
+    displayGifs();
 
 
 
